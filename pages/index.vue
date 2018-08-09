@@ -1,113 +1,113 @@
 <template>
-	<div class="wrap">
-		<el-container>
+    <div class="wrap">
+        <el-container>
 
-			<el-main>
-				<el-steps :active="active" finish-status="success" v-if="isFBReady">
-					<el-step title="登入並授權"></el-step>
-					<el-step title="取得粉絲頁列表"></el-step>
-					<el-step title="選擇粉絲頁"></el-step>
-					<el-step title="選擇文章"></el-step>
-					<el-step title="對留言進行回覆"></el-step>
-				</el-steps>
+            <el-main>
+                <el-steps :active="active" finish-status="success" v-if="isFBReady">
+                    <el-step title="登入並授權"></el-step>
+                    <el-step title="取得粉絲頁列表"></el-step>
+                    <el-step title="選擇粉絲頁"></el-step>
+                    <el-step title="選擇文章"></el-step>
+                    <el-step title="對留言進行回覆"></el-step>
+                </el-steps>
 
-				<br>
+                <br>
 
-				<br>
-				<br>
-				<!-- <el-button style="margin: 12px;" @click="handleNextStep">下一步</el-button> -->
-				<el-row>
-					<el-col :span="8">
-						<el-card class="box-card">
-							<div slot="header" class="clearfix">
-								<h1>Facebook SDK :
-									<i :class="isFBReady?'el-icon-success':'el-icon-error'"></i>
-								</h1>
-							</div>
-							<div v-for="(value, key, index) in dataFB" :key="index" class="text item">
-								<p>{{ key }}：　{{value}}</p>
+                <br>
+                <br>
+                <!-- <el-button style="margin: 12px;" @click="handleNextStep">下一步</el-button> -->
+                <el-row>
+                    <el-col :span="8">
+                        <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                                <h1>Facebook SDK :
+                                    <i :class="isFBReady?'el-icon-success':'el-icon-error'"></i>
+                                </h1>
+                            </div>
+                            <div v-for="(value, key, index) in dataFB" :key="index" class="text item">
+                                <p>{{ key }}：　{{value}}</p>
 
-							</div>
-						</el-card>
-					</el-col>
-					<el-col :span="16">
-						<template v-if="active==0 && isFBReady">
-							<h1>【Step 1】登入並授權</h1>
-							<br>
-							<el-button type="primary" @click="clickLogin">登入</el-button>
-						</template>
-						<template v-if="active==1">
-							<h1>【Step 2】取得粉絲列表</h1>
-							<br>
-							<el-button type="primary" @click="clickMeAccount">取得粉絲專頁列表</el-button>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="16">
+                        <template v-if="active==0 && isFBReady">
+                            <h1>【Step 1】登入並授權</h1>
+                            <br>
+                            <el-button type="primary" @click="clickLogin">登入</el-button>
+                        </template>
+                        <template v-if="active==1">
+                            <h1>【Step 2】取得粉絲列表</h1>
+                            <br>
+                            <el-button type="primary" @click="clickMeAccount">取得粉絲專頁列表</el-button>
 
-						</template>
-						<template v-if="active==2">
-							<h1>【Step 3】選擇粉絲頁</h1>
-							<br>
-							<el-table :data="listAccount" empty-text="No Data" highlight-current-row @current-change="handleAccountCurrentChange" style="width: 500px">
-								<el-table-column prop="id" label="ID" width="250">
-								</el-table-column>
-								<el-table-column prop="name" label="名稱" width="250">
-								</el-table-column>
-							</el-table>
-							<el-button style="margin: 12px;" v-if="AccountCurrentRow!==null" @click="handleNextStep">下一步</el-button>
-						</template>
-						<template v-if="active==3">
-							<h1>【Step 4】選擇文章</h1>
-							<br>
-							<el-table :data="listPosts" empty-text="No Data" highlight-current-row @current-change="handlePostsCurrentChange" style="width: 510px">
-								<el-table-column prop="created_time" label="建立時間" width="150">
-								</el-table-column>
-								<el-table-column prop="id" label="ID" width="160">
-								</el-table-column>
+                        </template>
+                        <template v-if="active==2">
+                            <h1>【Step 3】選擇粉絲頁</h1>
+                            <br>
+                            <el-table :data="listAccount" empty-text="No Data" highlight-current-row @current-change="handleAccountCurrentChange" style="width: 500px">
+                                <el-table-column prop="id" label="ID" width="250">
+                                </el-table-column>
+                                <el-table-column prop="name" label="名稱" width="250">
+                                </el-table-column>
+                            </el-table>
+                            <el-button style="margin: 12px;" v-if="AccountCurrentRow!==null" @click="handleNextStep">下一步</el-button>
+                        </template>
+                        <template v-if="active==3">
+                            <h1>【Step 4】選擇文章</h1>
+                            <br>
+                            <el-table :data="listPosts" empty-text="No Data" highlight-current-row @current-change="handlePostsCurrentChange" style="width: 510px">
+                                <el-table-column prop="created_time" label="建立時間" width="150">
+                                </el-table-column>
+                                <el-table-column prop="id" label="ID" width="160">
+                                </el-table-column>
 
-								<el-table-column prop="message" label="訊息" width="200">
-								</el-table-column>
-							</el-table>
-							<el-button style="margin: 12px;" v-if="PostsCurrentRow!==null" @click="handleNextStep">下一步</el-button>
-						</template>
-						<template v-if="active==4">
-							<h1>【Step 5】對留言進行回覆</h1>
-							<br>
+                                <el-table-column prop="message" label="訊息" width="200">
+                                </el-table-column>
+                            </el-table>
+                            <el-button style="margin: 12px;" v-if="PostsCurrentRow!==null" @click="handleNextStep">下一步</el-button>
+                        </template>
+                        <template v-if="active==4">
+                            <h1>【Step 5】對留言進行回覆</h1>
+                            <br>
 
-							<el-table :data="listComments" empty-text="No Data" highlight-current-row @current-change="handleCommentsCurrentChange" style="width: 660px">
-								<el-table-column prop="created_time" label="建立時間" width="150">
-								</el-table-column>
-								<el-table-column prop="id" label="ID" width="160">
-								</el-table-column>
-								<el-table-column prop="from.name" label="名稱" width="150">
-								</el-table-column>
-								<el-table-column prop="message" label="訊息" width="200">
-								</el-table-column>
-							</el-table>
-							<div style="margin: 20px;">
+                            <el-table :data="listComments" empty-text="No Data" highlight-current-row @current-change="handleCommentsCurrentChange" style="width: 660px">
+                                <el-table-column prop="created_time" label="建立時間" width="150">
+                                </el-table-column>
+                                <el-table-column prop="id" label="ID" width="160">
+                                </el-table-column>
+                                <el-table-column prop="from.name" label="名稱" width="150">
+                                </el-table-column>
+                                <el-table-column prop="message" label="訊息" width="200">
+                                </el-table-column>
+                            </el-table>
+                            <div style="margin: 20px;">
 
-							</div>
-							<el-form ref="form" label-width="80px" v-if="CommentsCurrentRow!==null">
-								<el-form-item label="類型">
-									<el-col :span="11">
-										<el-radio v-model="radioComment" label="comments" border>Comments</el-radio>
-										<el-radio v-model="radioComment" label="private_replies" border>Private Replies</el-radio>
-									</el-col>
+                            </div>
+                            <el-form ref="form" label-width="80px" v-if="CommentsCurrentRow!==null">
+                                <el-form-item label="類型">
+                                    <el-col :span="11">
+                                        <el-radio v-model="radioComment" label="comments" border>Comments</el-radio>
+                                        <el-radio v-model="radioComment" label="private_replies" border>Private Replies</el-radio>
+                                    </el-col>
 
-								</el-form-item>
+                                </el-form-item>
 
-								<el-form-item label="訊息">
-									<el-input type="text" v-model="inputMessage"></el-input>
-								</el-form-item>
-								<el-form-item>
-									<el-button type="success" @click.prevent="postReply" v-if="!(inputMessage.length<=0)" :loading="statusReply">傳送</el-button>
-								</el-form-item>
-							</el-form>
-							<!-- <el-button style="margin: 12px;" v-if="CommentsCurrentRow!==null" @click="handleNextStep">下一步</el-button> -->
-						</template>
-					</el-col>
-				</el-row>
+                                <el-form-item label="訊息">
+                                    <el-input type="text" v-model="inputMessage"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="success" @click.prevent="postReply" v-if="!(inputMessage.length<=0)" :loading="statusReply">傳送</el-button>
+                                </el-form-item>
+                            </el-form>
+                            <!-- <el-button style="margin: 12px;" v-if="CommentsCurrentRow!==null" @click="handleNextStep">下一步</el-button> -->
+                        </template>
+                    </el-col>
+                </el-row>
 
-			</el-main>
-		</el-container>
-	</div>
+            </el-main>
+        </el-container>
+    </div>
 
 </template>
 
@@ -144,8 +144,8 @@ export default {
 			this.isFBReady = true;
 		},
 		handleNextStep() {
-			// this.active++
-			if (this.active++ > 10) this.active = 0;
+			this.active++;
+			// if (this.active++ > 5) this.active = 0;
 		},
 		clickLogin() {
 			this.FB.login(
@@ -213,7 +213,6 @@ export default {
 				type: 'get',
 
 				success: res => {
-					console.log(res.data);
 					this.listComments = res.data;
 				},
 			});
@@ -252,13 +251,13 @@ export default {
 							message: '對不起, 一篇留言只能私訊一次',
 							type: 'error',
 						});
-						this.statusReply = false;
-						return;
+					} else {
+						this.$message({
+							message: '有地方出錯了',
+							type: 'error',
+						});
 					}
-					this.$message({
-						message: '有地方出錯了',
-						type: 'error',
-					});
+
 					this.statusReply = false;
 				},
 			});
