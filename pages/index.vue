@@ -25,7 +25,7 @@
                                 </h1>
                             </div>
                             <div v-for="(value, key, index) in dataFB" :key="index" class="text item">
-                                <p>{{ key }}：　{{value}}</p>
+                                <p :style="{ display: key=='PageAccessToken'?'none':''}">{{ key }}：　{{value}}</p>
 
                             </div>
                         </el-card>
@@ -34,7 +34,11 @@
                         <template v-if="active==0 && isFBReady">
                             <h1>【Step 1】登入並授權</h1>
                             <br>
-                            <el-button type="primary" @click="clickLogin">登入</el-button>
+                            <!-- <el-button type="primary" @click="clickLogin">登入</el-button> -->
+                            <a href="#" @click.prevent="clickLogin">
+                                <img src="~assets/img/fb_login.png" alt="Girl in a jacket" width="400">
+                            </a>
+                            <!-- <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-scope="manage_pages,publish_pages,read_page_mailboxes,pages_show_list" data-show-faces="false" onlogin="checkLoginState();" data-auto-logout-link="false" data-use-continue-as="false"></div> -->
                         </template>
                         <template v-if="active==1">
                             <h1>【Step 2】取得粉絲列表</h1>
@@ -70,6 +74,7 @@
                         <template v-if="active==4">
                             <h1>【Step 5】對留言進行回覆</h1>
                             <br>
+                            <el-button style="margin: 12px;"  @click="getCommentsList">Refresh Data</el-button>
 
                             <el-table :data="listComments" empty-text="No Data" highlight-current-row @current-change="handleCommentsCurrentChange" style="width: 660px">
                                 <el-table-column prop="created_time" label="建立時間" width="150">
@@ -134,7 +139,11 @@ export default {
 			statusReply: false,
 		};
 	},
-	created() {},
+	created() {
+		if (process.browser) {
+			window.checkLoginState = this.checkLoginState;
+		}
+	},
 
 	beforeDestroy: function() {
 		window.removeEventListener('fb-sdk-ready', this.onFBReady);
@@ -260,6 +269,13 @@ export default {
 
 					this.statusReply = false;
 				},
+			});
+		},
+		checkLoginState: () => {
+			this.FB.api('/me', response => {
+				Vue.set(this.dataFB, 'User', response.name);
+				Vue.set(this.dataFB, 'ID', response.id);
+				this.handleNextStep();
 			});
 		},
 	},
