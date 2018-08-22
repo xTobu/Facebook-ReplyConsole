@@ -1,7 +1,7 @@
 {
   "name": "commentbot",
   "version": "1.0.0",
-  "description": "Nuxt.js project",
+  "description": "for facebook review",
   "author": "Junxiang <junxiang.oriint@gmail.com>",
   "private": true,
   "config": {
